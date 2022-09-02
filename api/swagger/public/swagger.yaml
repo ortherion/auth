@@ -1,0 +1,175 @@
+basePath: /v1/auth
+definitions:
+  models.TokenPair:
+    properties:
+      accessToken:
+        description: AccessToken at
+        type: string
+      refreshToken:
+        description: RefreshToken rt
+        type: string
+    type: object
+  models.User:
+    properties:
+      creationDate:
+        type: integer
+      email:
+        type: string
+      first_name:
+        type: string
+      id:
+        type: string
+      last_name:
+        type: string
+      login:
+        example: test123
+        type: string
+      password:
+        example: qwerty
+        type: string
+      role:
+        type: integer
+    required:
+    - login
+    - password
+    type: object
+  rest.Error:
+    properties:
+      error:
+        type: string
+    type: object
+host: localhost:3000
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: Signed token protects our admin endpoints
+  title: Auth-service
+  version: 1.0.0
+paths:
+  /i:
+    post:
+      description: Validate tokens and refresh tokens if refresh token is valid
+      operationId: Info
+      parameters:
+      - description: access token
+        in: header
+        name: accessToken
+        required: true
+        type: string
+      - description: refresh token
+        in: header
+        name: refreshToken
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            $ref: '#/definitions/models.User'
+        "403":
+          description: forbidden
+          schema:
+            type: string
+        "500":
+          description: internal error
+          schema:
+            type: string
+      security:
+      - Auth: []
+      summary: Validate tokens
+      tags:
+      - auth
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate and authorized user. Return access and refresh tokens
+        in cookies.
+      operationId: login
+      parameters:
+      - description: redirect uri
+        in: query
+        name: redirect_uri
+        type: string
+      - description: request body
+        in: body
+        name: Login
+        required: true
+        schema:
+          $ref: '#/definitions/models.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          headers:
+            accessToken:
+              description: token for access services
+              type: string
+            refreshToken:
+              description: token for refresh access_token
+              type: string
+          schema:
+            $ref: '#/definitions/models.TokenPair'
+        "400":
+          description: bad request
+          schema:
+            $ref: '#/definitions/rest.Error'
+        "403":
+          description: forbidden
+          schema:
+            $ref: '#/definitions/rest.Error'
+        "404":
+          description: 404 page not found
+          schema:
+            type: string
+        "500":
+          description: internal error
+          schema:
+            $ref: '#/definitions/rest.Error'
+      summary: Authorized user
+      tags:
+      - auth
+  /logout:
+    post:
+      description: Clears access and refresh tokens
+      operationId: logout
+      parameters:
+      - description: redirect uri
+        in: query
+        name: redirect_uri
+        type: string
+      - description: access token
+        in: header
+        name: accessToken
+        required: true
+        type: string
+      - description: refresh token
+        in: header
+        name: refreshToken
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+        "302":
+          description: redirect
+        "500":
+          description: internal error
+      security:
+      - Auth: []
+      summary: Clears tokens
+      tags:
+      - auth
+schemes:
+- http
+securityDefinitions:
+  Auth:
+    type: basic
+swagger: "2.0"

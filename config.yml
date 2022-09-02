@@ -1,0 +1,39 @@
+app:
+  name: auth-service
+  debug: true
+  environment: dev
+  version: 1
+
+jwt:
+  access_token_expired_time: 1m
+  refresh_token_expired_time: 1h
+
+rest_http:
+  host: localhost
+  port: 8080
+  profile: off
+  timeout: 15 #Seconds
+  maxConnectionAge: 5 # Minutes
+
+mongodb:
+  dsn: mongodb://localhost:27018
+  addr: localhost
+  port: 27018
+  database: auth
+  collection: users
+  migrations:
+
+metrics:
+  host: 0.0.0.0
+  port: 9100
+  path: /metrics
+
+jaeger:
+  service: 
+  host:
+  port:
+
+sentry:
+  dsn:
+grafana:
+

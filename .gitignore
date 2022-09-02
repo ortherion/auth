@@ -1,0 +1,10 @@
+.env
+.idea
+docker-compose.yaml
+authTest.http
+auth.postman_collection.json
+mongod.conf
+user_data.json
+db
+go.sum
+bin
